@@ -20,7 +20,7 @@
         </p>
       </div>
       <h2 class="ItemH3">
-        {{ price }} руб.
+        {{ price }} руб. {{ id }}
       </h2>
     </div>
   </div>
@@ -35,7 +35,8 @@ export default {
     name: String,
     desc: String,
     price: String,
-    url: String
+    url: String,
+    id: String
   },
   data () {
     return {
@@ -43,6 +44,9 @@ export default {
     }
   },
   methods: {
+    LogKey () {
+      console.log(this.id)
+    },
     consoleLog () {
       emitter.emit('DeleteItem', this.$vnode.key)
     }

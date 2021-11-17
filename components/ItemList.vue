@@ -22,6 +22,7 @@
     <div class="ItemsGrid">
       <Item
         v-for="(Item, index) in Items"
+        :id="Item.ItemID"
         :key="index"
         :name="Item.Name"
         :desc="Item.Desc"
@@ -63,6 +64,8 @@ export default {
   },
   created () {
     emitter.on('ItemAdded', (mess) => {
+      mess.ItemId = this.Items.length.toString()
+      console.log(mess)
       this.Items.push(mess)
       this.saveStorage(this.Items)
     })
@@ -85,8 +88,8 @@ export default {
       const parsed = JSON.stringify(ItemsArr)
       localStorage.setItem('Items', parsed)
     },
-    sortCompaniesByName () {
-      this.Items.sort(function (a, b) {
+    sortCompaniesByName (Items) {
+      Items.sort(function (a, b) {
         return ((a.Name === b.Name) ? 0 : ((a.Name > b.Name) ? 1 : -1))
       })
     }

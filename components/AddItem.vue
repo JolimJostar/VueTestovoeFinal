@@ -95,7 +95,7 @@ export default {
       ItemName: null,
       ItemDesc: null,
       ItemImgUrl: null,
-      ItemPrice: ''
+      ItemPrice: null
     }
   },
   computed: {
@@ -145,7 +145,8 @@ export default {
           Name: this.ItemName,
           Desc: this.ItemDesc,
           Url: this.ItemImgUrl,
-          Price: this.ItemPrice
+          Price: this.ItemPrice,
+          ItemId: ''
         }
         emitter.emit('ItemAdded', ItemPayload)
         this.ItemName = ''
