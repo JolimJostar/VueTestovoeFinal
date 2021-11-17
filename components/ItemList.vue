@@ -62,17 +62,13 @@ export default {
     }
   },
   created () {
-    function saveStorage (ItemsArr) {
-      const parsed = JSON.stringify(ItemsArr)
-      localStorage.setItem('Items', parsed)
-    }
     emitter.on('ItemAdded', (mess) => {
       this.Items.push(mess)
-      saveStorage(this.Items)
+      this.saveStorage(this.Items)
     })
     emitter.on('DeleteItem', (Index) => {
       this.Items.splice(Index, 1)
-      saveStorage(this.Items)
+      this.saveStorage(this.Items)
     })
   },
   mounted () {
@@ -82,6 +78,17 @@ export default {
       } catch (e) {
         localStorage.removeItem('Items')
       }
+    }
+  },
+  methods: {
+    saveStorage (ItemsArr) {
+      const parsed = JSON.stringify(ItemsArr)
+      localStorage.setItem('Items', parsed)
+    },
+    sortCompaniesByName () {
+      this.Items.sort(function (a, b) {
+        return ((a.Name === b.Name) ? 0 : ((a.Name > b.Name) ? 1 : -1))
+      })
     }
   }
 }
