@@ -64,7 +64,6 @@
           </div>
           <input
             v-model="ItemPrice"
-            v-mask="'## ## ##'"
             v-validate="'required|numeric'"
             type="number"
             name="Price"
@@ -85,11 +84,9 @@
 <script>
 import Vue from 'vue'
 import VeeValidate from 'vee-validate'
-import VueMask from 'v-mask'
 import { emitter } from '@/assets/js/event-bus.js'
 
 Vue.use(VeeValidate)
-Vue.use(VueMask)
 
 export default {
   name: 'AddItem',
