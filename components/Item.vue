@@ -5,11 +5,11 @@
     @mouseleave="hover = false"
   >
     <transition name="fade" mode="out-in">
-      <button v-show="hover" class="DeleteButton" @click="consoleLog">
+      <button v-show="hover" class="DeleteButton" @click="DeleteItem">
         <img src="@/static/Delete.svg" alt="">
       </button>
     </transition>
-    <div class="ItemImage" :style="{backgroundImage:`url(${url})`}" />
+    <div class="ItemImage" :style="{backgroundImage:`url(${url})`}" @click="LogKey" />
     <div class="ItemContentHolder">
       <div class="ItemContentHolderText">
         <h3 class="ItemH1">
@@ -20,7 +20,7 @@
         </p>
       </div>
       <h2 class="ItemH3">
-        {{ price }} руб. {{ id }}
+        {{ price }} руб.
       </h2>
     </div>
   </div>
@@ -36,7 +36,7 @@ export default {
     desc: String,
     price: String,
     url: String,
-    id: String
+    id: Number
   },
   data () {
     return {
@@ -47,7 +47,7 @@ export default {
     LogKey () {
       console.log(this.id)
     },
-    consoleLog () {
+    DeleteItem () {
       emitter.emit('DeleteItem', this.$vnode.key)
     }
   }
@@ -64,6 +64,11 @@ export default {
   border-radius: $mainBorderRadius;
   box-shadow: $mainShaddow;
   cursor: $mainCursorPointer;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.Item:hover{
+  box-shadow: 0 0 50px #ccc;
 }
 
 .DeleteButton{
@@ -74,6 +79,12 @@ export default {
   background: #FF8484;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
+  cursor: $mainCursorPointer;
+  transition: ease-in 0.2s border-radius;
+}
+
+.DeleteButton:hover{
+  border-radius: 50%;
 }
 
 .ItemImage{

@@ -1,18 +1,22 @@
+
 <template>
-  <div class="ItemListHolder">
+  <div v-if="loadind" class="PreloaderHolder">
+    <Preloader />
+  </div>
+  <div v-else class="ItemListHolder">
     <div class="FilterHolder">
       <div class="Select">
-        <select id="" name="">
-          <option value="">
+        <select id="" v-model="selected" name="">
+          <option value="1">
             По умолчанию
           </option>
-          <option value="">
+          <option value="2">
             По цене min
           </option>
-          <option value="">
+          <option value="3">
             По цене max
           </option>
-          <option value="">
+          <option value="4">
             По наименованию
           </option>
         </select>
@@ -21,8 +25,8 @@
     </div>
     <div class="ItemsGrid">
       <Item
-        v-for="(Item, index) in Items"
-        :id="Item.ItemID"
+        v-for="(Item, index) in SortedItemsArr"
+        :id="Item.ItemId"
         :key="index"
         :name="Item.Name"
         :desc="Item.Desc"
@@ -35,14 +39,17 @@
 
 <script>
 import Item from './Item.vue'
+import Preloader from './Preloader.vue'
 import { emitter } from '@/assets/js/event-bus.js'
 
 export default {
   name: 'ItemList',
-  components: { Item },
+  components: { Item, Preloader },
   data () {
     return {
-      Items: []
+      Items: [],
+      selected: '1',
+      loadind: true
       /* {
         Name: 'test1',
         Desc: 'test decs',
@@ -62,42 +69,91 @@ export default {
       ] */
     }
   },
+  computed: {
+    SortedItemsArr () {
+      switch (this.selected) {
+        case '1':
+          return this.Items
+        case '2':
+          return this.SortCompaniesByPriceDec(this.Items)
+        case '3':
+          return this.SortCompaniesByPriceInc(this.Items)
+        case '4':
+          return this.SortCompaniesByName(this.Items)
+        default:
+          return undefined
+      }
+    }
+  },
   created () {
     emitter.on('ItemAdded', (mess) => {
-      mess.ItemId = this.Items.length.toString()
-      console.log(mess)
+      mess.ItemId = this.Items.length
       this.Items.push(mess)
-      this.saveStorage(this.Items)
+      this.SaveStorage(this.Items)
     })
     emitter.on('DeleteItem', (Index) => {
       this.Items.splice(Index, 1)
-      this.saveStorage(this.Items)
+      this.SaveStorage(this.Items)
     })
   },
   mounted () {
     if (localStorage.getItem('Items')) {
       try {
-        this.Items = JSON.parse(localStorage.getItem('Items'))
+        this.Items = this.GetDataFromLocalStore(localStorage)
       } catch (e) {
         localStorage.removeItem('Items')
       }
     }
   },
   methods: {
-    saveStorage (ItemsArr) {
+    GetDataFromLocalStore (localStorage) {
+      const res = JSON.parse(localStorage.getItem('Items'))
+      this.loadind = false
+      return res
+    },
+    SaveStorage (ItemsArr) {
       const parsed = JSON.stringify(ItemsArr)
       localStorage.setItem('Items', parsed)
     },
-    sortCompaniesByName (Items) {
-      Items.sort(function (a, b) {
-        return ((a.Name === b.Name) ? 0 : ((a.Name > b.Name) ? 1 : -1))
+    SortCompaniesByName (Items) {
+      const NeedToSortArr = [...Items]
+      NeedToSortArr.sort(function (a, b) {
+        a = a.Name
+        b = b.Name
+        return ((a === b) ? 0 : ((a > b) ? 1 : -1))
       })
+      return NeedToSortArr
+    },
+    SortCompaniesByPriceInc (Items) {
+      const NeedToSortArr = [...Items]
+      NeedToSortArr.sort(function (a, b) {
+        a = parseInt(a.Price)
+        b = parseInt(b.Price)
+        return ((a === b ? 0 : ((a > b) ? -1 : 1)))
+      })
+      return NeedToSortArr
+    },
+    SortCompaniesByPriceDec (Items) {
+      const NeedToSortArr = [...Items]
+      NeedToSortArr.sort(function (a, b) {
+        a = parseInt(a.Price)
+        b = parseInt(b.Price)
+        return ((a === b ? 0 : ((a > b) ? 1 : -1)))
+      })
+      return NeedToSortArr
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+
+.PreloaderHolder{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .ItemListHolder{
   width: 100%;

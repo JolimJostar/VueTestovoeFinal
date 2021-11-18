@@ -146,7 +146,7 @@ export default {
           Desc: this.ItemDesc,
           Url: this.ItemImgUrl,
           Price: this.ItemPrice,
-          ItemId: ''
+          ItemId: undefined
         }
         emitter.emit('ItemAdded', ItemPayload)
         this.ItemName = ''
@@ -160,6 +160,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+textarea:focus{
+  outline: 1px solid gray;
+}
+
+input:focus{
+  outline: 1px solid gray;
+}
 
 .AddItemHolder{
   align-self: flex-start;
@@ -236,6 +244,10 @@ export default {
   cursor: $mainCursorPointer;
   background: #7BAE73;
   color: #FFFFFF;
+}
+
+.Valid:active{
+  outline: green 1px solid;
 }
 
 .Requered > input{
